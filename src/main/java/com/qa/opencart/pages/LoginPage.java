@@ -25,7 +25,7 @@ public class LoginPage {
 	private By login = By.xpath("//input[@value='Login']");
 	private By forgotpswdLink = By.linkText("Forgotten Password");
 	private By registerLink = By.linkText("Register");
-	private By GitTest = By.linkText("GITTest")
+	private By GitTest = By.linkText("GITTest");
 	
 	
 	
