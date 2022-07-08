@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.Duration;
 import java.util.Properties;
 
@@ -14,6 +16,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 import com.qa.opencart.exceptions.FrameworkException;
 
@@ -44,9 +47,18 @@ public class DriverFactory {
 		System.out.println("the Browser name is " + browserName);
 		
 		if(browserName.equalsIgnoreCase("chrome")) {
-			WebDriverManager.chromedriver().setup();
-			//driver = new ChromeDriver();
-			tlDriver.set(new ChromeDriver(optinonsManager.getChromeOptions()));
+			if(Boolean.parseBoolean(prop.getProperty("remote"))) {
+				//remote Execution
+				init_remoteDriver("chrome");
+				
+			}else {
+				//Local Execution
+				WebDriverManager.chromedriver().setup();
+				//driver = new ChromeDriver();
+				tlDriver.set(new ChromeDriver(optinonsManager.getChromeOptions()));
+			}
+			
+			
 		}
 		else if(browserName.equalsIgnoreCase("firefox")) {
 			WebDriverManager.firefoxdriver().setup();
@@ -71,6 +83,29 @@ public class DriverFactory {
 		return getDriver();
 	}
 	
+	private void init_remoteDriver(String browserName) {
+		
+		System.out.println("Running the testst cases of Remote Machine Docker/ Cloud");
+		
+		if(browserName.equalsIgnoreCase("chrome")) {
+		try {
+			tlDriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")), optinonsManager.getChromeOptions()));
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		}
+		
+		else if(browserName.equalsIgnoreCase("firefox")) {
+			try {
+				tlDriver.set(new RemoteWebDriver(new URL(prop.getProperty("huburl")), optinonsManager.getFirefoxOptions()));
+			} catch (MalformedURLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			}
+	}
+
 	/**
 	 * get the thread local copy of driver
 	 * 
